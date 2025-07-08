@@ -1,0 +1,279 @@
+
+/* nunito-sans-regular - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Nunito Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/nunito-sans-v15-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  /* nunito-sans-600 - latin */
+  @font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Nunito Sans';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/nunito-sans-v15-latin-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  /* nunito-sans-800 - latin */
+  @font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Nunito Sans';
+    font-style: normal;
+    font-weight: 800;
+    src: url('../fonts/nunito-sans-v15-latin-800.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }/* nunito-sans-regular - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Nunito Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/nunito-sans-v15-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  /* nunito-sans-600 - latin */
+  @font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Nunito Sans';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/nunito-sans-v15-latin-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  /* nunito-sans-800 - latin */
+  @font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Nunito Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/nunito-sans-v15-latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+
+#wpcontent:has(#hdk_spektrix){
+    background-color:#fff;
+}
+
+#hdk_spektrix{
+    padding:9rem 3rem;
+    font-family: 'Nunito Sans', sans-serif;
+    min-height:100dvh;
+    box-sizing: border-box;
+}
+
+#hdk_spektrix h1, #hdk_spektrix h2, #hdk_spektrix h3{
+    font-weight:700;
+}
+
+#hdk_spektrix h2{
+    font-size:1.5rem;
+    color:#2C2C83;
+}
+
+#hdk_spektrix h3{
+    font-size:1.2rem;
+    color:#2C2C83;
+}
+
+#hdk_spektrix p{
+    color:#2C2C83;
+    font-weight: 600;
+    font-size:1rem;
+    max-width:900px;
+}
+
+#hdk_spektrix p.event_message{
+    color:#EB5A20;
+    font-weight: 800;
+}
+
+#hdk_spektrix a{
+    color:#EB5A20;
+    font-weight: 600;
+    text-decoration: none;
+    font-size:1rem;
+}
+
+#hdk_spektrix button, #hdk_spektrix input[type=submit]{
+    font-size: 1rem;
+    border: 1px solid #2C2C83;
+    background-color: #fff;
+    color: #2C2C83;
+    font-weight: 600;
+    padding: 1rem;
+    transition: background-color 400ms linear, color 400ms ease;
+    cursor:pointer;
+}
+
+#hdk_spektrix button:active, #hdk_spektrix input[type=submit]:active{
+    background-color: #2C2C83;
+    color: #fff;
+}
+
+#hdk_spektrix button:hover,#hdk_spektrix input[type=submit]:hover{
+    background-color: #2C2C83;
+    color: #fff;
+}
+
+#hdk_spektrix input{
+    padding: 1rem;
+    border: 1px solid #2C2C83;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2C2C83;
+}
+
+.awesomplete li{
+    cursor:pointer;
+    border:1px solid #2C2C83;
+    padding:0.5rem;
+    width:fit-content;
+}
+
+.awesomplete li mark{
+    background-color: #EB5A20;
+    color: #fff;
+}
+
+.awesomplete>span{
+    margin-left:1rem;
+}
+
+
+
+.hdk_spektrix_header_bar {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: -20px;
+    height: 8rem;
+    width: 100%;
+    background-color: #2C2C83;
+    color: #fff;
+    padding: 1rem 4rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.hdk_spektrix_header_bar h1{
+    color:#fff;
+    font-size:2rem;
+}
+
+.hdk_spektrix_header_bar img{
+    width:4rem;
+    height:4rem;
+}
+
+
+
+#spinner{
+    width:50px;
+    height:50px;
+    border:4px solid #EB5A20;
+    border-radius:50%;
+    border-bottom-color:transparent;
+    margin-bottom:1rem;
+    display:none;
+}
+
+.show #spinner, .display #spinner{
+    display:block;
+    animation: spin 1000ms linear 0ms infinite;
+}
+
+@keyframes spin{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+#track{
+    width:300px;
+    height:20px;
+    background-color: #fff;
+    border:2px solid #EB5A20;
+    border-radius:10px;
+    display:none;
+    position:relative;
+    overflow:hidden;
+}
+
+.show #track{
+    display:block;
+}
+
+#track-inner{
+    position:absolute;
+    left:0;
+    top:-2px;
+    height:20px;
+    width:100%;
+    max-width:0;
+    transition:max-width 400ms linear;
+    background-color:#EB5A20;
+    border-radius:10px;
+    border: 2px solid #EB5A20;
+}
+
+#event_modal {
+    position: fixed;
+    top: calc(50% - 250px);
+    left: calc(50% - 160px);
+    width: 320px;
+    height: 500px;
+    
+}
+
+#event_modal::before {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.6);
+    content: '';
+    z-index: -1;
+}
+
+#event_modal .event_modal_inner{
+    padding: 1rem;
+    background-color: white;
+    z-index: 100;
+    width:100%;
+    height:100%;
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: stretch;
+    gap:1rem;
+    overflow: auto;
+    border:1px solid #2C2C83;
+    border-radius:0.5rem;
+    scrollbar-color: #2C2C83 #fff;
+}
+
+#event_modal .event_modal_inner::-webkit-scrollbar{
+    width:0.5rem;
+}
+
+#event_modal .event_modal_inner::-webkit-scrollbar-thumb{
+    background-color:#2C2C83;
+    border-radius:0.5rem;
+}
+
+#event_modal .event_modal_inner::-webkit-scrollbar-track{
+    background-color:#fff;
+    border-radius:0.5rem;
+}
+
+
+div#event_modal button {
+    width: 100%;
+    cursor: pointer;
+}
+
+table#event_date_time>tbody>tr>td:first-of-type {
+    word-break: break-all;
+}
