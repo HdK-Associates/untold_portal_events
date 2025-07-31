@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Alexandra Palace Spektrix System 
+ * Plugin Name: Untold Spektrix System 
  * Plugin URI:  https://wearehdk.com
- * Description: Custom Plugin for Alexandra Palace (integrates the Spektrix Ticketing System)
+ * Description: Custom Plugin for Untold (integrates the Spektrix Ticketing System)
  * Version:     1.0
  * Author:      Chad Rossouw for HdK
  * Author URI:  https://wearehdk.com

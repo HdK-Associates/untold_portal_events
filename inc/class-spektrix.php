@@ -94,7 +94,7 @@ public function get_seating_plan($instance_id) {
 public function get_event_price_range($ID) {	
     global $wpdb;
     $events_data_prices_table = $this->tables['events_data_prices'];
-    $sql ="SELECT MIN(amount) AS MinPrice, MAX(amount) AS MaxPrice FROM (SELECT amount FROM ".$events_data_prices_table." WHERE EventPriceParentId = '".$ID."' AND NOT ticketType_name = 'Essential Companion' AND NOT ticketType_name = 'Accessible') tmp";
+    $sql ="SELECT MIN(amount) AS MinPrice, MAX(amount) AS MaxPrice FROM (SELECT amount FROM ".$events_data_prices_table." WHERE EventPriceParentId = '".$ID."' AND NOT ticketType_name = 'Child under 5' AND NOT ticketType_name = 'Carer (proof required on entry)') tmp";
     $data = $wpdb->get_row($sql, ARRAY_A);
     if(fmod($data['MinPrice'],1)==0.0){
         $data['MinPrice']=intval($data['MinPrice']);

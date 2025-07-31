@@ -22,6 +22,6 @@ class HdKSpInit{
     }
 
     public function cli_register_commands(){
-        WP_CLI::add_command('ap_spektrix','HdKSpektrixCli');
+        WP_CLI::add_command('spektrix','HdKSpektrixCli');
     }
 }

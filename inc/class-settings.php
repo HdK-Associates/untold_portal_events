@@ -9,6 +9,7 @@ class HdKSpSettings{
     private string $event_cpt;
     private int $refresh_months;
     private $attributes;
+    private string $museum_mode;
 
     public function __construct(){ 
         if(!isset($_ENV['SPEKTRIX_ACCOUNT_ID']) || !isset($_ENV['SPEKTRIX_ENDPOINT'])){
@@ -25,6 +26,7 @@ class HdKSpSettings{
         $this->refresh_months   = 12;
         //Adding custom handling for attributes, so using null here
         $this->attributes       = null;
+        $this->museum_mode      = 'museum'; // Default mode, can be changed in settings
     }
 
     public function getSettings(){
@@ -38,6 +40,7 @@ class HdKSpSettings{
             'event_cpt'             => $this->event_cpt,
             'refresh_months'        => $this->refresh_months,
             'attributes'            => $this->attributes,
+            'museum_mode'           => $this->museum_mode
         );
         return $settings;
     }

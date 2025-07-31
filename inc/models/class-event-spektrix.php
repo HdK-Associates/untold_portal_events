@@ -115,45 +115,12 @@ class SpektrixEvent{
                                 });
         $instance_dates = array_map(function($n){
                                     $shortID = $this->get_short_id($n['id']);
-                                    $addinfo_options = [
-                                        'attribute_SignedPerformance'=>'bsl-interpreted',
-                                        'attribute_Captioned'=>'captioned',
-                                        'attribute_RelaxedPerformance'=>'relaxed-performance',
-                                        'attribute_AudioDescribed'=>'audio-described',
-                                        'attribute_DementiaFriendly'=> 'dementia-friendly',
-                                        'attribute_PressNight'=>'press-night',
-                                        'attribute_Preview'=> 'preview',
-                                        'attribute_SchoolsPerformance'=> 'schools-performance',
-                                        'attribute_TouchTour'=> 'touch-tour',
-                                        'attribute_SoldOut'=> 'sold-out',
-                                        'attribute_Cancelled'=> 'cancelled',
-                                        'attribute_Postponed'=> 'postponed',
-                                        'attribute_SellingFast'=> 'selling-fast',
-                                        'attribute_WaitingList'=> 'waiting-list',
-                                        'attribute_Free'=> 'free'
-                                    ];
-                                    $info = [];
-                                    foreach($addinfo_options as $key=>$option){
-                                        if(isset($n[$key])&&$n[$key]){
-                                            $info[]=$option;
-                                        }
-                                        if($option=='sold-out'&&!in_array('sold-out',$info)){
-                                            if($n['attribute_AutoDistancingSeatGap']){
-                                                $is_sold_out= $n['available']<$n['attribute_AutoDistancingSeatGap']?'sold-out':false;
-                                            }
-                                            else{
-                                                $is_sold_out= $n['available']<=0?'sold-out':false;
-                                            }
-                                            if($is_sold_out){
-                                                $info[]=$is_sold_out;
-                                            }
-                                        }
-                                    }
                                     return array(
                                         'start'=>$n['start'],
                                         'end'=>isset($n['end'])?:$n['start'],
                                         'id'=>$shortID,
                                         'full_id'=>$n['id'],
+                                        'available'=>$n['available'],
                                         'info'=>$info,
                                     ); 
                                     
@@ -205,7 +172,7 @@ class SpektrixEvent{
         return $month_year;
     }
 
-    public function get_event_dates_times_form(){
+    public function get_event_dates_times(){
         if(!$this->instances){
             $this->instances = $this->Spektrix->get_event_instances($this->id);
         }
@@ -217,23 +184,7 @@ class SpektrixEvent{
             return $html;
         }
         $post_meta = $this->get_post_meta();
-        $addinfo_options = [
-            'attribute_SignedPerformance'=>'bsl-interpreted',
-            'attribute_Captioned'=>'captioned',
-            'attribute_RelaxedPerformance'=>'relaxed-performance',
-            'attribute_AudioDescribed'=>'audio-described',
-            'attribute_DementiaFriendly'=> 'dementia-friendly',
-            'attribute_PressNight'=>'press-night',
-            'attribute_Preview'=> 'preview',
-            'attribute_SchoolsPerformance'=> 'schools-performance',
-            'attribute_TouchTour'=> 'touch-tour',
-            'attribute_SoldOut'=> 'sold-out',
-            'attribute_Cancelled'=> 'cancelled',
-            'attribute_Postponed'=> 'postponed',
-            'attribute_SellingFast'=> 'selling-fast',
-            'attribute_WaitingList'=> 'waiting-list',
-            'attribute_Free'=> 'free'
-        ];
+        
         $html = '
         <h3>Dates and Times</h3>
             <div class="inside">
@@ -241,65 +192,36 @@ class SpektrixEvent{
                     <thead>
                         <tr>
                             <th>Instance ID</th>
-                            <th>Gate Opens</th>
                             <th>Start Time</th>
-                            <th>Event End</th>
-                            <th>Additional info</th>
+                            <th>Available</th>
+                            <th>Pricing</th>
                         </tr>
                     </thead>
                     <tbody>';
-                        foreach($this->instances as $instance){
-
-                            $gateOpen = isset($post_meta['gateopen_'.$instance['id']])?$post_meta['gateopen_'.$instance['id']][0]:$instance['start'];
-                            $end = $instance['start'];
-                            $duration = isset($post_meta['duration'])?$post_meta['duration'][0]:120;
-                            if(isset($post_meta['end_'.$instance['id']])){
-                                $end = $post_meta['end_'.$instance['id']][0];
+                        $_ticketType='';
+                        foreach($this->instances as $i=>$instance){
+                            $ticket_types = $this->Spektrix->get_instance_ticket_types($instance['id'])?:[];
+                            $ticket_types = array_map(function($n){
+                                return '<li>'.$n['ticketType_name']. ' (£'.$n['amount'].')</li>';
+                            },$ticket_types);
+                            $ticket_types = implode('',$ticket_types);
+                            if($i==0){
+                                $_ticketType = $ticket_types;
                             }
-                            else{
-                                $end = date('Y-m-d\TH:i:s',strtotime($instance['start'])+intval($post_meta['duration'][0] * 60));
+                            if(!$ticket_types){
+                                $ticket_types = $_ticketType;
                             }
-                            if(isset($post_meta['addinfo_'.$instance['id']])){
-                                $addinfo = maybe_unserialize($post_meta['addinfo_'.$instance['id']][0]);
-                            }
-                            else{
-                                $addinfo = [];
-                            }
+                            $html.= 
                            
-        $html.=         '<tr>
-                            <td>'.$instance['id'].'</td>
-                            <td><input type="text" class="event_date input" value="'.date('F j, Y g:i a',strtotime($gateOpen)).'" name="gateopen_'.$instance['id'].'"></td>
-                            <td>'.date('F j, Y g:i a',strtotime($instance['start'])).'</td>
-                            <td><input type="text" class="event_date input" value="'.date('F j, Y g:i a',strtotime($end)).'" name="end_'.$instance['id'].'"></td>
-                            <td><details><summary>See info</summary><ul class="acf-checkbox-list acf-bl">';
-                            
-                                foreach($addinfo_options as $key=>$option){
-
-                                    $selected = in_array($option,$addinfo)?'checked':false;
-                                    
-                                    if(!$selected){
-                                        $selected = isset($instance[$key])&&$instance[$key]?'checked':false;  
-                                    }
-                                    if($option=='sold-out'&&!$selected){
-                                        $selected = $instance['available']<=0?'checked':false;
-                                        if($instance['attribute_AutoDistancingSeatGap']){
-                                            $is_sold_out= $instance['available']<=$instance['attribute_AutoDistancingSeatGap']?'sold-out':false;
-                                        }
-                                        else{
-                                            $is_sold_out= $instance['available']<=0?'sold-out':false;
-                                        }
-                                        if($is_sold_out){
-                                            $info[]=$is_sold_out;
-                                        }
-                                    }
-                                    $html.='<li><label><input type="checkbox" name="addinfo_'.$instance['id'].'[]" value="'.$option.'" '.$selected.'>'.$option.'</label></li>';
-                                }
-                            
-        $html.='                
-                            </ul></details></td>
+                            '<tr>
+                                <td>'.$instance['id'].'</td>
+                                <td>'.date('j F Y g:i a',strtotime($instance['start'])).'</td>
+                                <td>'.($instance['available']>0?$instance['available']:'Sold Out').'</td>
+                                <td><details><summary>Ticket Types</summary><ul>'.$ticket_types.'</ul></details></td>
                            </tr>'; 
                         }
-        $html.=     '</tbody>
+                        $html.=     
+                    '</tbody>
                 </table>
             </div>';
         return $html;
