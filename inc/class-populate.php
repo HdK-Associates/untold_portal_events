@@ -1000,10 +1000,10 @@ class HdKSpPopulate{
         $counts[$this->temp_tables['events_data']] = intval($this->tableCounter($this->temp_tables['events_data']));
         $counts[$this->temp_tables['events_data_prices']] = intval($this->tableCounter($this->temp_tables['events_data_prices']));
         $counts[$this->temp_tables['events_attributes_terms_temp']] = intval($this->tableCounter($this->temp_tables['events_attributes_terms_temp']));
-        if($this->settings['is_merch_active']){
+        /* if($this->settings['is_merch_active']){
             $counts[$this->temp_tables['merch']] = intval($this->tableCounter($this->temp_tables['merch']));
             $counts[$this->temp_tables['merch_attributes_terms_temp']] = intval($this->tableCounter($this->temp_tables['merch_attributes_terms_temp']));
-        }
+        } */
         if($this->settings['is_members_active']){
             $counts[$this->temp_tables['members']] = intval($this->tableCounter($this->temp_tables['members']));
         }
