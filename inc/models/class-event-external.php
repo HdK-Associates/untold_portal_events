@@ -27,8 +27,8 @@ class ExternalEvent extends SpektrixEvent
 
     public function get_dates(): array
     {
-        $start = get_field('start_date');
-        $end = get_field('end_date');
+        $start = get_field('start_date', $this->post_id);
+        $end = get_field('end_date', $this->post_id);
         $nextInstance = get_post_meta($this->post_id, 'next_instance_date', true);
         if (!$nextInstance) {
             $nextInstance = $start;
@@ -118,10 +118,10 @@ class ExternalEvent extends SpektrixEvent
 
     public function get_price_range()
     {
-        $price = get_field('ticket_price');
+        $price = get_field('ticket_price', $this->post_id);
         return $price;
     }
-
+    
 
 
     public function is_spektrix()
