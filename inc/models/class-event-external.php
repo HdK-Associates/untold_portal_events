@@ -119,9 +119,14 @@ class ExternalEvent extends SpektrixEvent
     public function get_price_range()
     {
         $price = get_field('ticket_price', $this->post_id);
+        if ($price == 0) {
+            $price = 'Free';
+        } else {
+            $price = 'From R' . $price;
+        }
         return $price;
     }
-    
+
 
 
     public function is_spektrix()
