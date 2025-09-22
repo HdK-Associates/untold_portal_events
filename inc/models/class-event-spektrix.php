@@ -19,16 +19,19 @@ class SpektrixEvent
     public $short_id;
     public $populate;
     public $seat_gap;
-    public function __construct(int $post_id)
+    public function __construct(int $post_id=0,$id='')
     {
         $this->post_id = $post_id;
         $this->Spektrix = new HdKSpektrix;
         $this->tables = $this->Spektrix->tables;
+        $this->id = $id;
         $this->get_data();
     }
     public function get_data()
     {
-        $this->id = $this->Spektrix->get_event_id($this->post_id);
+        if(!$this->id){
+            $this->id = $this->Spektrix->get_event_id($this->post_id);
+        }
         if (!$this->id) {
             $this->id = get_post_meta($this->post_id, 'ap-event-spektrix-id', true);
             //Checking if there is data for this event
@@ -421,7 +424,7 @@ class SpektrixEvent
         return $output;
     }
 
-    public function get_api_booking_flow($cache, $seat_spacing, $supps, $facilitated_booking)
+    public function get_api_booking_flow($cache, $seat_spacing, $page=1)
     {
         if (!$this->instances) {
             $this->instances = $this->Spektrix->get_event_instances($this->id);
@@ -443,10 +446,11 @@ class SpektrixEvent
                 $seat_gap = $first_instance['attribute_AutoDistancingSeatGap'];
             }
         };
-        //$ticketType=$this->get_instance_ticket_types($this->instances[0]['id']);
+        $ticketType=$this->get_instance_ticket_types($this->instances[0]['id']);
         $instances = [];
+        $now = wp_date('Y-m-d\TH:i:s');
         foreach ($this->instances as $instance) {
-            if ($instance['isOnSale'] != "0" && $instance['cancelled'] == "0" || !$instance['cancelled']) {
+            if ($instance['start']>$now && $instance['isOnSale'] != "0" && ($instance['cancelled'] == "0" || !$instance['cancelled']) ) {
                 $available = true;
                 if ($seat_gap && isset($instance['available']) && $instance['available'] < $seat_gap) {
                     $available = false;
@@ -464,21 +468,18 @@ class SpektrixEvent
                 ];
             }
         }
-        $script = 'const INSTANCES = ' . json_encode($instances) . '; const SPEKTRIXBASEURL = "' . $this->Spektrix->settings['subdomain'] . '/' . $this->Spektrix->settings['client_code'] . '/api/v3/instances"; const SPEKTRIXBASKETURL = "https://' .  $this->Spektrix->settings['subdomain'] . '/' . $this->Spektrix->settings['client_code'] . '/api/v3/basket/tickets";';
+        $script = 'const INSTANCES = ' . json_encode($instances) . '; const SPEKTRIXBASEURL = "' . $this->Spektrix->settings['subdomain'] . '/' . $this->Spektrix->settings['client_code'] . '/api/v3/instances"; const SPEKTRIXBASKETURL = "' .  $this->Spektrix->settings['subdomain'] . '/' . $this->Spektrix->settings['client_code'] . '/api/v3/basket/tickets";';
         $script .= ' const SEATGAP = "' . $seat_gap . '";';
-        //$script.=' const TICKETTYPES = '.json_encode($ticketType).';';
+        $script.=' const TICKETTYPES = '.json_encode($ticketType).';';
+        $script .= ' const CURRENT_PAGE = ' . intval($page) . ';';
 
 
         wp_add_inline_script('spektrix-calendar', $script, 'before');
 
-        $output = '<div id="buy_tickets_api_component" class="api_component"><div id="select_tickets" class="ChooseSeats ' . ($supps ? 'api_component_to_basket' : '') . '"><h1 id="tickets">Select your dates</h1><div id="color-calendar"></div><div id="response"></div></div>';
-
-
-        if ($facilitated_booking) {
-            $params['ChooseAttendee'] = 'true';
-        }
-        $output .= '<div class="iframe-wrapper d-none">' . HdkSpUtilities::getChooseSeatsIframe('__id__', $params) . '</div>';
-
+        $output = '<div id="buy_tickets_api_component" class="api_component">';
+        $output .= '<div id="select_tickets" class="ChooseSeats api_component_to_basket step_1"><h4 id="tickets">Select a date</h4><div class="grid grid_50"><div id="color-calendar"></div><div id="time_response"></div></div><div id="ticket_response"></div></div>';
+        $output .= '<div class="basket_iframe step_2">' . (HdKSpUtilities::generateIframe('Basket2',true,false,false,true) ). '</div>';
+        $output .= '<div class="checkout_iframe step_3">' . (HdKSpUtilities::generateIframe('Checkout',false,false,true,true) ). '</div>';
         $output .= '</div>';
 
         return $output;

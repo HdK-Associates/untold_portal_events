@@ -49,5 +49,9 @@ class HdKSpFrontLoader{
                 wp_enqueue_script('ap-customer', plugin_dir_url( __DIR__ ) . 'js/ap-customer.js', [], HDK_SPEKTRIX_VERSION, true );
             }
         }
+        if(get_post_type($post)=='page' && get_page_template_slug($post)=='admission.php'){
+            wp_enqueue_script('color-calendar', plugin_dir_url( __DIR__ ). 'js/color-calendar.js', [], '1.4.2', true );
+            wp_enqueue_script('spektrix-calendar', plugin_dir_url( __DIR__ ) . 'js/spektrix-calendar.js', ['color-calendar'], HDK_SPEKTRIX_VERSION, true );
+        }
     }
 }

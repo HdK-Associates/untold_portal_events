@@ -251,6 +251,14 @@ public function update_event_relations($post_id,$spektrixID){
     $relations = $this->tables['relationships'];
     $wpdb->insert($relations,array('spektrixID'=>$spektrixID,'shortID'=>$shortID,'postID'=>$post_id,'updated'=>date('Y-m-d')));
 }
+
+public function get_events() {	
+    global $wpdb;
+    $events_table = $this->tables['events'];
+    $sql ="SELECT id, name FROM ".$events_table." ORDER BY name ASC";
+    $data = $wpdb->get_results($sql, ARRAY_A);
+    return $data;
+}
 /*
 
 public function SpektrixGetEventShortID($ID) {	
