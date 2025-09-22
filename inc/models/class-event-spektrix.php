@@ -19,12 +19,16 @@ class SpektrixEvent
     public $short_id;
     public $populate;
     public $seat_gap;
+    private $client_code;
+    private $subdomain;
     public function __construct(int $post_id=0,$id='')
     {
         $this->post_id = $post_id;
         $this->Spektrix = new HdKSpektrix;
         $this->tables = $this->Spektrix->tables;
         $this->id = $id;
+        $this->client_code 		= $_ENV['SPEKTRIX_ACCOUNT_ID'];
+        $this->subdomain		= $_ENV['SPEKTRIX_ENDPOINT'];
         $this->get_data();
     }
     public function get_data()
@@ -281,11 +285,13 @@ class SpektrixEvent
         }
         return $prices_str;
     }
+
     public function get_add_tickets_to_basket_url()
     {
         $client_codes = HdkSpUtilities::get_client_codes();
         return 'https://' . $client_codes['subdomain'] . '/' . $client_codes['client_code'] . '/api/v3/basket/tickets';
     }
+
     public function is_sold_out()
     {
         $available = $this->data['totalAvailable'];
@@ -387,7 +393,7 @@ class SpektrixEvent
     public function get_login_checker($not_logged_in, $restrict_by_tags, $no_access_message)
     {
         global $post;
-        $script  = 'const SPEKTRIXBASEURLCUSTOMER = "' . SPEKTRIX_ENDPOINT . '/' . SPEKTRIX_ACCOUNT_ID . '/api/v3/customer";
+        $script  = 'const SPEKTRIXBASEURLCUSTOMER = "' . $this->subdomain . '/' . $this->client_code . '/api/v3/customer";
         const SPEKTRIXTAGNAME = ' . json_encode($restrict_by_tags) . ';
         const SPEKTRIXNOACCESSMESSAGE = "' . $no_access_message . '";';
         wp_add_inline_script('ap-customer', $script, 'before');
@@ -629,9 +635,9 @@ class SpektrixEvent
         }
         $script = 'const INSTANCES = ' . json_encode($instances) . ';
             const SUPP_INSTANCES = ' . json_encode($supp_events_data) . '; 
-            const SPEKTRIXBASEURL = "' . SPEKTRIX_ENDPOINT . '/' . SPEKTRIX_ACCOUNT_ID . '/api/v3/instances"; 
-            const SPEKTRIXBASKETURL = "' . SPEKTRIX_ENDPOINT . '/' . SPEKTRIX_ACCOUNT_ID . '/api/v3/basket/tickets";
-            const SPEKTRIXCLEARBASKETURL = "' . SPEKTRIX_ENDPOINT . '/' . SPEKTRIX_ACCOUNT_ID . '/api/v3/basket/clear";';
+            const SPEKTRIXBASEURL = "' . $this->subdomain . '/' . $this->client_code . '/api/v3/instances"; 
+            const SPEKTRIXBASKETURL = "' . $this->subdomain . '/' . $this->client_code . '/api/v3/basket/tickets";
+            const SPEKTRIXCLEARBASKETURL = "' . $this->subdomain . '/' . $this->client_code . '/api/v3/basket/clear";';
         $script .= ' const SUPP_EVENT = true;';
         $script .= ' const SEATGAP = "' . $seat_gap . '";';
         // $script.=' const TICKETTYPES = '.json_encode($ticketType).';';
@@ -734,6 +740,9 @@ class SpektrixEvent
         return $id[0];
     }
 
+    public function get_booking_url(){
+        return get_site_url().'/book-tickets/?event_id='.$this->post_id;
+    }
 
     public function is_spektrix()
     {

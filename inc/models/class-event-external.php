@@ -127,7 +127,16 @@ class ExternalEvent extends SpektrixEvent
         return $price;
     }
 
+    public function get_booking_url()
+    {
+        return get_field('external_booking_link', $this->post_id);
+    }
 
+
+    public function is_sold_out()
+    {
+        return get_field('sold_out', $this->post_id);
+    }
 
     public function is_spektrix()
     {
