@@ -240,15 +240,13 @@ class HdkSpAPI{
         }
         return $json;
       }
+
     public function get_customer(){
        // $Endpoint   = $this->subdomain .'/'.$this->client_code.'/api/v3/customer';
-        $Endpoint   = 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customer';
+        $Endpoint   = 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customer?$expand=subscriptions';
         $response = wp_remote_get($Endpoint);
-        if ( is_wp_error( $response ) ) {
-            return $response->get_error_message();
-        } else {
-            return $response;
-        }
+        $Data = $this->load_request($response);
+        return $Data;
     }
     
     public function set_customer_gift_aid(){

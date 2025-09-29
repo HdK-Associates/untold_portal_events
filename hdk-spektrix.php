@@ -56,6 +56,7 @@ function hdk_spektrix_load_plugin(){
     require HDK_SPEKTRIX_DIR . 'inc/models/class-event.php';
     require HDK_SPEKTRIX_DIR . 'inc/models/class-event-spektrix.php';
     require HDK_SPEKTRIX_DIR . 'inc/models/class-event-external.php';
+    require HDK_SPEKTRIX_DIR . 'inc/class-user.php';
 
 
     $Spektrix = new HdKSpInit();
