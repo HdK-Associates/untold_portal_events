@@ -1,21 +1,31 @@
 <?php 
 class HdKSpUser {
+    private static $instance = null;
     private $api;
     private $settings;
     private $customer;
 
-    public function __construct() {
+    private function __construct() {
         $this->settings = HdKSpUtilities::get_spektrix_settings();
         $this->api = new HdkSpAPI($this->settings);
         $this->get_current_user();
     }
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
     
     public function get_current_user(){
         $customer = $this->api->get_customer();
-        if(is_wp_error($customer)||$customer['response']['code']!=200){
+        if(is_wp_error($customer)||$customer['0']->key == 'Message'){
             $this->customer = false;
         }
-        $this->customer = $customer;
+        else{
+            $this->customer = $customer;
+        }
     }
 
     public function get_customer(){
@@ -45,10 +55,10 @@ class HdKSpUser {
         return $ids;
     }
 
-    public function has_membership($membership_id){
+    public function has_membership(array $membership_ids){
         $memberships = $this->get_memberships();
         foreach($memberships as $membership){
-            if($membership->membership->id == $membership_id){
+            if(in_array($membership->membership->id, $membership_ids)){
                 return true;
             }
         }

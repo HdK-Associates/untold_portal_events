@@ -384,5 +384,23 @@ class HdKSpUtilities{
         return $output;
     }
 
+    public static function loginForm(){
+        $client_codes = self::get_client_codes();
+        wp_enqueue_script('hdk-login',plugin_dir_url( __DIR__ ). 'js/login.js',[],'1.0',true);
+        $output = '<form id="login_form" action="'.$client_codes['subdomain'].'/'.$client_codes['client_code'].'/api/v3/customer/authenticate" method="POST">
+            <label for="Email">Email address</label>
+            <input name="email" id="email" type="email" required>
+
+            <label for="Password">Password</label>
+            <input name="password" id="password" type="password" required>
+
+            <a href="'.get_site_url().'/reset-password/" class="forgot_password">Forgotten your password?</a>
+            
+            <input id="login_submit" type="submit" name="submit" class="button decorative" value="Log in">
+            <div id="login_errors"></div>
+        </form>';
+        return $output;
+        
+    }
     
 }
