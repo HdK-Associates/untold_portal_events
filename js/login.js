@@ -27,8 +27,8 @@
                 loginForm.classList.remove('loading');
             }
             else{
-                loginForm.closest('.login').classList.remove('logged_out');
-                loginForm.closest('.login').classList.add('logged_in');
+                let emitEvent = new CustomEvent('spektrixLoginSuccess',{bubbles:true,detail:data});
+                loginForm.dispatchEvent(emitEvent);
             }
         })
         .catch(error => {

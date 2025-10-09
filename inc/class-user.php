@@ -8,7 +8,9 @@ class HdKSpUser {
     private function __construct() {
         $this->settings = HdKSpUtilities::get_spektrix_settings();
         $this->api = new HdkSpAPI($this->settings);
+        add_action('wp_enqueue_scripts',[$this,'enqueue_scripts']);
         $this->get_current_user();
+
     }
 
     public static function getInstance() {
@@ -17,14 +19,18 @@ class HdKSpUser {
         }
         return self::$instance;
     }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('customer', plugin_dir_url(__FILE__) . '../js/customer.js', [], HDK_SPEKTRIX_VERSION, true);
+        wp_add_inline_script('customer', 'const SPEKTRIXBASEURLCUSTOMER = "https://system.spektrix.com/' .$this->settings['client_code'] . '/api/v3/customer";', 'before');
+    }   
     
     public function get_current_user(){
-        $customer = $this->api->get_customer();
-        if(is_wp_error($customer)||$customer['0']->key == 'Message'){
-            $this->customer = false;
-        }
-        else{
-            $this->customer = $customer;
+        $cookie = isset($_COOKIE['spektrix_customer']) ? sanitize_text_field($_COOKIE['spektrix_customer']) : '';
+        if($cookie){
+            $this->customer = json_decode(stripslashes($cookie));
+        } else {
+            $this->customer = null;
         }
     }
 

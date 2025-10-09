@@ -244,7 +244,7 @@ class HdkSpAPI{
     public function get_customer(){
        // $Endpoint   = $this->subdomain .'/'.$this->client_code.'/api/v3/customer';
         $Endpoint   = 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customer?$expand=subscriptions';
-        $response = wp_remote_get($Endpoint);
+        $response = wp_remote_get($Endpoint,['headers'=>['credentials'=>'include']]);
         $Data = $this->load_request($response);
         return $Data;
     }
