@@ -39,7 +39,7 @@ class HdKSpUtilities{
     }
 
     public static function get_donate_component($client_code, $fund_id){
-        $amounts = explode(',',get_option('hdk-donate-amounts'));
+        $amounts = explode(',',get_field('hdk-donate-amounts','option'));
         $success = get_option('hdk-donate-success');
         $error = get_option('hdk-donate-error');
         $output = '<spektrix-donate client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain'].'" fund-id="'.$fund_id.'">';
@@ -64,7 +64,7 @@ class HdKSpUtilities{
             $output.= '<spektrix-memberships client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain'].'" membership-id="'.$membership['id'].'">';
             $output.= '<h3>'.$membership['name'].'</h3><p>'.$membership['htmlDescription'].'</p>';
             $output.='<h4>£'.$membership['price'].'</h4>';
-            $output .= '<button data-submit-membership>Join</button>
+            $output .= '<button data-submit-membership>Donate</button>
             <label for="autorenew">
                 <input type="checkbox" name="autorenew" data-set-autorenew>Automatically renew?
             </label>

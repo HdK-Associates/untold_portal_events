@@ -224,13 +224,14 @@ public function get_memberships() {
 }
 
 /*Need to put the name of the fund directly here. Can be changed if we have more than one relevent fund*/
-public function get_donate_component(){
-    $fund_id = $this->get_fund_id('Support Us');
+public function get_donate_component($fund_id){
     return HdKSpUtilities::get_donate_component($this->settings,$fund_id);
 }
 
-public function get_members_component(){
-    $memberships = $this->get_memberships();
+public function get_members_component($memberships = null){
+    if(!$memberships){
+        $memberships = $this->get_memberships();
+    }
     return HdKSpUtilities::get_members_component($this->settings,$memberships);
 }
 public function get_basket_summary_component(){
