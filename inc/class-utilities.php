@@ -237,19 +237,25 @@ class HdKSpUtilities{
 
     public static function getNewsletterForm(){
         $client_codes = self::get_client_codes();
-        $output='<form id="newsletter" action="https://'.$client_codes['subdomain'].'/'.$client_codes['client_code'].'/website/secure/signup.aspx" method="POST">
+        $output='
+        <div class="sign-up_message hide"></div>
+        <form action="'.$client_codes['subdomain'].'/'.$client_codes['client_code'].'/website/secure/signup.aspx" method="POST">
 			<input
                 type="hidden"
                 name="ReturnUrl"
                 value="'.get_site_url().'/thank-you-for-signing-up/"
             />
-			<label for="FirstName" >First Name:</label>
-			<input name="FirstName" id="FirstName" type="text" placeholder="First name" required>
+            <div class="input_group grid grid_50">
+                <label for="FirstName" >First Name:</label>
+                <input name="FirstName" id="FirstName" type="text" placeholder="First name" required>
 
-			<label for="LastName">Last Name:</label>
-			<input name="LastName" id="LastName" type="text" placeholder="Last name" required>
-
-			<input placeholder="Email address" name="Email" id="Email" type="email" required>';
+                <label for="LastName">Last Name:</label>
+                <input name="LastName" id="LastName" type="text" placeholder="Last name" required>
+            </div>
+            <div class="input_group">
+                <label for="Email">Email Address:</label>
+                <input placeholder="Email address" name="Email" id="Email" type="email" required>
+            </div>';
 		$output.='<input id="newsletter_submit" type="submit" name="submit" value="Subscribe">
 		</form>';
         return $output;
