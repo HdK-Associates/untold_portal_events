@@ -16,6 +16,7 @@ class HdKSpUtilities{
        return [
         'client_code'=>$settings['client_code'],
         'subdomain'=>$settings['subdomain'],
+        'subdomain_no_schema'=>$settings['subdomain_no_schema'],
         'stylesheet'=>$settings['stylesheet']
        ];
     }
@@ -42,7 +43,7 @@ class HdKSpUtilities{
         $amounts = explode(',',get_field('hdk-donate-amounts','option'));
         $success = get_option('hdk-donate-success');
         $error = get_option('hdk-donate-error');
-        $output = '<spektrix-donate client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain'].'" fund-id="'.$fund_id.'">';
+        $output = '<spektrix-donate client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain_no_schema'].'" fund-id="'.$fund_id.'" forward-to="/basket">';
         $output.= '<div class="donate--amount"><span>Donate £</span><span data-display-donation-amount></span></div>';
         $output.= '<div class="donate--buttons">';
         foreach($amounts as $amount){
@@ -61,7 +62,7 @@ class HdKSpUtilities{
    
         $output='';
         foreach($memberships as $membership){
-            $output.= '<spektrix-memberships client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain'].'" membership-id="'.$membership['id'].'">';
+            $output.= '<spektrix-memberships client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain_no_schema'].'" membership-id="'.$membership['id'].'" forward-to="/basket">';
             $output.= '<h3>'.$membership['name'].'</h3><p>'.$membership['htmlDescription'].'</p>';
             $output.='<h4>£'.$membership['price'].'</h4>';
             $output .= '<button data-submit-membership>Donate</button>

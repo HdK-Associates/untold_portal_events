@@ -3,6 +3,7 @@ class HdKSpSettings{
     private string $client_code;
     private string $stylesheet;
     private string $subdomain;
+    private string $subdomain_no_schema;
     private bool $members;
     private bool $funds;
     private bool $tags;
@@ -19,6 +20,7 @@ class HdKSpSettings{
         $this->client_code 		= $_ENV['SPEKTRIX_ACCOUNT_ID'];
         $this->stylesheet 		= 'spektrix-style.css';	
         $this->subdomain		= $_ENV['SPEKTRIX_ENDPOINT'];
+        $this->subdomain_no_schema = $_ENV['SPEKTRIX_ENDPOINT_NO_SCHEMA'] ?? '';
         $this->members 		    = true;
         $this->funds            = true;
         $this->tags    		    = true;
@@ -34,6 +36,7 @@ class HdKSpSettings{
             'client_code'           => $this->client_code,
             'stylesheet'            => $this->stylesheet,
             'subdomain'             => $this->subdomain,
+            'subdomain_no_schema'   => $this->subdomain_no_schema,
             'is_members_active'     => $this->members,
             'is_funds_active'        => $this->funds,
             'is_tags_active'        => $this->tags,
