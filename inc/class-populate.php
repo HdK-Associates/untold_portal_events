@@ -178,7 +178,13 @@ class HdKSpPopulate{
             }
             set_time_limit(0);
             ignore_user_abort(true);
-            $insert = $this->insertEvent($event);            
+            $insert = $this->insertEvent($event); 
+            if(isset($insert['skipped'])){
+                if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                    WP_CLI::line( 'Skipped '. $event->name .' : '. $insert['skipped'] );
+                }
+                continue;
+            }
             if(isset($insert['error'])){
                 $error[] = $insert['error'];
                 if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -469,6 +475,9 @@ class HdKSpPopulate{
             if(isset($validate['error']) && $validate['error']){
                 return ['error'=>'Error validating '.$event->id.': '.implode(" | ",$validate['error'])];
             }
+            if($event->attribute_EVENTTYPE!=='Regimental'){
+                return ['skipped'=>'Event Type is not Regimental'];
+            }
             $eventsData = [
                 "id"             				=>$event->id,
                 "webEventId"             		=>$event->webEventId,
@@ -480,35 +489,17 @@ class HdKSpPopulate{
                 "instanceDates"             	=>$event->instanceDates,
                 "firstInstanceDateTime"         =>$event->firstInstanceDateTime,
                 "lastInstanceDateTime"          =>$event->lastInstanceDateTime,
-                "attribute_GetLiveInstances"    =>$event->attribute_GetLiveInstances,
-                "attribute_24hrsPreSale"        =>$event->attribute_24hrsPreSale,
-                "attribute_GetLiveInstances"    =>$event->attribute_GetLiveInstances,
-                "attribute_Website"             =>$event->attribute_Website,
-                "attribute_Music"               =>$event->attribute_Music,
-                "attribute_Theatre"             =>$event->attribute_Theatre,
-                "attribute_Christmas"           =>$event->attribute_Christmas,
-                "attribute_Comedy"              =>$event->attribute_Comedy,
-                "attribute_CreativeLearning"    =>$event->attribute_CreativeLearning,
-                "attribute_IceHockey"           =>$event->attribute_IceHockey,
-                "attribute_IceRink"             =>$event->attribute_IceRink,
-                "attribute_IceRinkEvents"       =>$event->attribute_IceRinkEvents,
-                "attribute_Sport"               =>$event->attribute_Sport,
-                "attribute_SummerSeries"        =>$event->attribute_SummerSeries,
-                "attribute_TheTerrace"          =>$event->attribute_TheTerrace,
-                "attribute_ToursAndTalks"       =>$event->attribute_ToursAndTalks,
-                "attribute_Festivals"           =>$event->attribute_Festivals,
-                "attribute_LifestyleExhibitions"=>$event->attribute_LifestyleExhibitions,
-                "attribute_TradeExhibitions"    =>$event->attribute_TradeExhibitions,
-                "attribute_Accessible"          =>$event->attribute_Accessible,
-                "attribute_SoldOut"             =>$event->attribute_SoldOut,
-                "attribute_Cancelled"           =>$event->attribute_Cancelled,
-                "attribute_Postponed"           =>$event->attribute_Postponed,
-                "attribute_WaitingList"         =>$event->attribute_WaitingList,
-                "attribute_SellingFast"         =>$event->attribute_SellingFast,
-                "attribute_Free"                =>$event->attribute_Free,
-                "attribute_WebsiteSupplementaryItem"=>$event->attribute_WebsiteSupplementaryItem,
-                "attribute_WebsiteSupplementaryItemOrder"=>$event->attribute_WebsiteSupplementaryItemOrder,
-                "attribute_SubHeading"          =>$event->attribute_SubHeading,
+                "attribute_AGERANGE"            =>$event->attribute_AGERANGE,
+                "attribute_EVENTSUBJECT"       =>$event->attribute_EVENTSUBJECT,
+                "attribute_EVENTTYPE"          =>$event->attribute_EVENTTYPE,
+                "attribute_ONLINE"             =>$event->attribute_ONLINE,
+                "attribute_TRIGGERWARNINGTAG"  =>$event->attribute_TRIGGERWARNINGTAG,
+                "attribute_VENUE"              =>$event->attribute_VENUE,
+                "attribute_FAMILYFRIENDLY"     =>$event->attribute_FAMILYFRIENDLY,
+                "attribute_FREEFORMEMBERS"     =>$event->attribute_FREEFORMEMBERS,
+                "attribute_SCHOOLSKEYSTAGE"    =>$event->attribute_SCHOOLSKEYSTAGE,
+                "attribute_KS1TOPICS"          =>$event->attribute_KS1TOPICS,
+                "attribute_KS3TOPICS"          =>$event->attribute_KS3TOPICS,
                 "updated"						=> date('Y-m-d h:i:s')
             ];
             $insert = $this->wpdb->insert($this->temp_tables['events'], $eventsData);
@@ -557,25 +548,6 @@ class HdKSpPopulate{
             "stopSellingAtWebUtc"             	=>$eventItem->stopSellingAtWebUtc,
             "cancelled"             			=>$eventItem->cancelled,
             "id"             					=>$eventItem->id,
-            "attribute_AutoDistancingSeatGap"   =>$eventItem->attribute_AutoDistancingSeatGap,
-            "attribute_AudioDescribed"          =>$eventItem->attribute_AudioDescribed,
-            "attribute_Captioned"               =>$eventItem->attribute_Captioned,
-            "attribute_DementiaFriendly"        =>$eventItem->attribute_DementiaFriendly,
-            "attribute_PressNight"              =>$eventItem->attribute_PressNight,
-            "attribute_Preview"                 =>$eventItem->attribute_Preview,
-            "attribute_RelaxedPerformance"      =>$eventItem->attribute_RelaxedPerformance,
-            "attribute_SignedPerformance"       =>$eventItem->attribute_SignedPerformance,
-            "attribute_TouchTour"               =>$eventItem->attribute_TouchTour,
-            "attribute_RelaxedPerformance"      =>$eventItem->attribute_RelaxedPerformance,
-            "attribute_SignedPerformance"       =>$eventItem->attribute_SignedPerformance,
-            "attribute_TouchTour"               =>$eventItem->attribute_TouchTour,
-            "attribute_SchoolsPerformance"      =>$eventItem->attribute_SchoolsPerformance,
-            "attribute_SoldOut"                 =>$eventItem->attribute_SoldOut,
-            "attribute_Cancelled"               =>$eventItem->attribute_Cancelled,
-            "attribute_Postponed"               =>$eventItem->attribute_Postponed,
-            "attribute_SellingFast"             =>$eventItem->attribute_SellingFast,
-            "attribute_WaitingList"             =>$eventItem->attribute_WaitingList,
-            "attribute_Free"                    =>$eventItem->attribute_Free,
             "available"                         =>$eventItemStatus?$eventItemStatus->available:NULL,
         ];
         if(!$single){
