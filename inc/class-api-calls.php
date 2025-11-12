@@ -115,12 +115,11 @@ class HdkSpAPI{
         return $auth;
     }
 
-    public function SpektrixAPIPostUserWithTags($firstName,$lastName,$email,$tags=null){
+    public function SpektrixAPIPostUserWithTags($firstName,$lastName,$email,$tags=null,$server_side=false){
         $bodyParams = [
             'email'=>$email,
             'firstName'=>$firstName,
             'lastName'=>$lastName,
-            'AgreedStatements'=>[$this->consent_id]
         ];
         if($tags){
             if(!is_array($tags)){
@@ -128,14 +127,32 @@ class HdkSpAPI{
             }
             $bodyParams['Tags']=$tags;
         }
-        $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customer';        
-        $rawdata	= wp_remote_post($endpoint,[
-            'method' => 'POST',
-            'headers'     => [
-                'Content-Type' => 'application/json',
-            ],
-            'body'=>json_encode($bodyParams)
-        ]);	
+          
+        if(!$server_side){
+            $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customer';      
+            $rawdata	= wp_remote_post($endpoint,[
+                'method' => 'POST',
+                'headers'     => [
+                    'Content-Type' => 'application/json',
+                ],
+                'body'=>json_encode($bodyParams)
+            ]);	
+        }
+        else{
+            $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers'; 
+             $date       = gmdate('D, d M Y H:i:s \G\M\T');  
+             $body = json_encode($bodyParams);   
+             $rawdata	= wp_remote_post($endpoint,[
+                'method' => 'POST',
+                'headers'     => [
+                    'Authorization' => $this->CreateAuthHeader('POST',$endpoint,$body,$date),
+                    'host' => 'system.spektrix.com',
+                    'date' => $date,
+                    'Content-Type' => 'application/json',
+                ],
+                'body'=>$body
+            ]);	
+        }
         $data = json_decode(wp_remote_retrieve_body( $rawdata),true);
         if(isset($data['id'])){
             return 'Thank you. You\'ve been successfully signed up';
@@ -176,7 +193,7 @@ class HdkSpAPI{
                         $return = true;
                     }
                 }
-                $endpoint   = 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers/'.$id.'/agreed-statements';
+                /* $endpoint   = 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers/'.$id.'/agreed-statements';
                 $method     = 'POST';
                 $date       = gmdate('D, d M Y H:i:s \G\M\T');
                 $body       = json_encode([["id"=>$this->consent_id]]);
@@ -193,7 +210,7 @@ class HdkSpAPI{
                 $data = json_decode(wp_remote_retrieve_body( $rawdata),true);
                 if(isset($data[0]['id'])){
                     $return = true;
-                }
+                } */
             }
             if($return){
                 return 'Thank you. You\'ve been successfully signed up';

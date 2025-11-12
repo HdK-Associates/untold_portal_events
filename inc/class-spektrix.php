@@ -195,9 +195,10 @@ public function get_tag_form(){
     }
     return HdKSpUtilities::getTagForm($tags,$user_id);
 }
-public function addTagsToUser($fname,$lname,$email,$tags){
+
+public function addTagsToUser($fname,$lname,$email,$tags,$server_side=false){
     $api = new HdkSpAPI($this->settings);
-    return $api->SpektrixAPIPostUserWithTags($fname,$lname,$email,$tags);
+    return $api->SpektrixAPIPostUserWithTags($fname,$lname,$email,$tags,$server_side);
 }
 
 public function post_tag_handler(){
