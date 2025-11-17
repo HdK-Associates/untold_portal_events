@@ -3,12 +3,14 @@ class HdKSpSettings{
     private string $client_code;
     private string $stylesheet;
     private string $subdomain;
+    private string $subdomain_no_schema;
     private bool $members;
     private bool $funds;
     private bool $tags;
     private string $event_cpt;
     private int $refresh_months;
     private $attributes;
+    private string $museum_mode;
 
     public function __construct(){ 
         if(!isset($_ENV['SPEKTRIX_ACCOUNT_ID']) || !isset($_ENV['SPEKTRIX_ENDPOINT'])){
@@ -16,8 +18,9 @@ class HdKSpSettings{
         }
        // add_action('admin_init',array($this,'RegisterSettings'));
         $this->client_code 		= $_ENV['SPEKTRIX_ACCOUNT_ID'];
-        $this->stylesheet 		= 'spektrix-iframe-styles.css';	
+        $this->stylesheet 		= 'spektrix-style.css';	
         $this->subdomain		= $_ENV['SPEKTRIX_ENDPOINT'];
+        $this->subdomain_no_schema = $_ENV['SPEKTRIX_ENDPOINT_NO_SCHEMA'] ?? '';
         $this->members 		    = true;
         $this->funds            = true;
         $this->tags    		    = true;
@@ -25,6 +28,7 @@ class HdKSpSettings{
         $this->refresh_months   = 12;
         //Adding custom handling for attributes, so using null here
         $this->attributes       = null;
+        $this->museum_mode      = 'museum'; // Default mode, can be changed in settings
     }
 
     public function getSettings(){
@@ -32,12 +36,14 @@ class HdKSpSettings{
             'client_code'           => $this->client_code,
             'stylesheet'            => $this->stylesheet,
             'subdomain'             => $this->subdomain,
+            'subdomain_no_schema'   => $this->subdomain_no_schema,
             'is_members_active'     => $this->members,
             'is_funds_active'        => $this->funds,
             'is_tags_active'        => $this->tags,
             'event_cpt'             => $this->event_cpt,
             'refresh_months'        => $this->refresh_months,
             'attributes'            => $this->attributes,
+            'museum_mode'           => $this->museum_mode
         );
         return $settings;
     }

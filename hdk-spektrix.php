@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Alexandra Palace Spektrix System 
+ * Plugin Name: Untold Spektrix System 
  * Plugin URI:  https://wearehdk.com
- * Description: Custom Plugin for Alexandra Palace (integrates the Spektrix Ticketing System)
+ * Description: Custom Plugin for Untold (integrates the Spektrix Ticketing System)
  * Version:     1.0
  * Author:      Chad Rossouw for HdK
  * Author URI:  https://wearehdk.com
@@ -56,6 +56,7 @@ function hdk_spektrix_load_plugin(){
     require HDK_SPEKTRIX_DIR . 'inc/models/class-event.php';
     require HDK_SPEKTRIX_DIR . 'inc/models/class-event-spektrix.php';
     require HDK_SPEKTRIX_DIR . 'inc/models/class-event-external.php';
+    require HDK_SPEKTRIX_DIR . 'inc/class-user.php';
 
 
     $Spektrix = new HdKSpInit();

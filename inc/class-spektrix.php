@@ -94,7 +94,7 @@ public function get_seating_plan($instance_id) {
 public function get_event_price_range($ID) {	
     global $wpdb;
     $events_data_prices_table = $this->tables['events_data_prices'];
-    $sql ="SELECT MIN(amount) AS MinPrice, MAX(amount) AS MaxPrice FROM (SELECT amount FROM ".$events_data_prices_table." WHERE EventPriceParentId = '".$ID."' AND NOT ticketType_name = 'Essential Companion' AND NOT ticketType_name = 'Accessible') tmp";
+    $sql ="SELECT MIN(amount) AS MinPrice, MAX(amount) AS MaxPrice FROM (SELECT amount FROM ".$events_data_prices_table." WHERE EventPriceParentId = '".$ID."' AND NOT ticketType_name = 'Child under 5' AND NOT ticketType_name = 'Carer (proof required on entry)') tmp";
     $data = $wpdb->get_row($sql, ARRAY_A);
     if(fmod($data['MinPrice'],1)==0.0){
         $data['MinPrice']=intval($data['MinPrice']);
@@ -225,13 +225,14 @@ public function get_memberships() {
 }
 
 /*Need to put the name of the fund directly here. Can be changed if we have more than one relevent fund*/
-public function get_donate_component(){
-    $fund_id = $this->get_fund_id('Support Us');
+public function get_donate_component($fund_id){
     return HdKSpUtilities::get_donate_component($this->settings,$fund_id);
 }
 
-public function get_members_component(){
-    $memberships = $this->get_memberships();
+public function get_members_component($memberships = null){
+    if(!$memberships){
+        $memberships = $this->get_memberships();
+    }
     return HdKSpUtilities::get_members_component($this->settings,$memberships);
 }
 public function get_basket_summary_component(){
@@ -251,6 +252,14 @@ public function update_event_relations($post_id,$spektrixID){
     $shortID = $shortID[0];
     $relations = $this->tables['relationships'];
     $wpdb->insert($relations,array('spektrixID'=>$spektrixID,'shortID'=>$shortID,'postID'=>$post_id,'updated'=>date('Y-m-d')));
+}
+
+public function get_events() {	
+    global $wpdb;
+    $events_table = $this->tables['events'];
+    $sql ="SELECT id, name FROM ".$events_table." ORDER BY name ASC";
+    $data = $wpdb->get_results($sql, ARRAY_A);
+    return $data;
 }
 /*
 

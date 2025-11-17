@@ -102,7 +102,7 @@ class HdKSpPopulate{
 
     //Called via rest from the UI
     public function UpdateTablesEvents(){
-        if(false === get_transient('spektrix_update_running')){
+        /* if(false === get_transient('spektrix_update_running')){
             set_transient('spektrix_update_running',true,3600);
         }
         else{
@@ -110,7 +110,7 @@ class HdKSpPopulate{
             delete_transient('spektrix_refresh_message');
             set_transient('spektrix_refresh_error',$message,180);
             return ['error'=>$message];
-        }  
+        }   */
         $count =0 ;
         $error=[];
         $this->DropTempTables();
@@ -438,7 +438,9 @@ class HdKSpPopulate{
         if ( defined( 'WP_CLI' ) && WP_CLI ) {
             WP_CLI::line( 'Importing event for '. $eventID);
         } 
-
+        if($this->settings['museum_mode']!=='regimental' && $event->attribute_EVENTTYPE=='Regimental Only'){
+            return;
+        }
         $insert = $this->insertEvent($event, true); 
         $eventData = $this->getEventData($event->id,true);
         if(isset($eventData['error'])){
@@ -462,6 +464,7 @@ class HdKSpPopulate{
     }
 
     public function insertEvent(object $event, $importToLive = false){
+            
             $description = '';
             /*Checking if there is actually a description. Spektrix returns empty div tags rather than null*/
             if($event->htmlDescription){
@@ -612,7 +615,6 @@ class HdKSpPopulate{
             "name"             				=> $item->name,
             "price"                         => $item->price,
             "renewalPrice"                  => $item->renewalPrice,
-            "attribute_Frequency"          =>  $item->attribute_Frequency,
             "updated"						=> date('Y-m-d h:i:s')
         ];
         return $this->wpdb->insert($this->temp_tables['members'], $membersData );
@@ -685,32 +687,17 @@ class HdKSpPopulate{
             "instanceDates"             	=> $event->instanceDates,
             "firstInstanceDateTime"         => $event->firstInstanceDateTime,
             "lastInstanceDateTime"          => $event->lastInstanceDateTime,
-            "attribute_Website"             =>$event->attribute_Website,
-            "attribute_Music"               =>$event->attribute_Music,
-            "attribute_Theatre"             =>$event->attribute_Theatre,
-            "attribute_Christmas"           =>$event->attribute_Christmas,
-            "attribute_Comedy"              =>$event->attribute_Comedy,
-            "attribute_CreativeLearning"    =>$event->attribute_CreativeLearning,
-            "attribute_IceHockey"           =>$event->attribute_IceHockey,
-            "attribute_IceRink"             =>$event->attribute_IceRink,
-            "attribute_IceRinkEvents"       =>$event->attribute_IceRinkEvents,
-            "attribute_Sport"               =>$event->attribute_Sport,
-            "attribute_SummerSeries"        =>$event->attribute_SummerSeries,
-            "attribute_TheTerrace"          =>$event->attribute_TheTerrace,
-            "attribute_ToursAndTalks"       =>$event->attribute_ToursAndTalks,
-            "attribute_Festivals"           =>$event->attribute_Festivals,
-            "attribute_LifestyleExhibitions"=>$event->attribute_LifestyleExhibitions,
-            "attribute_TradeExhibitions"    =>$event->attribute_TradeExhibitions,
-            "attribute_Accessible"          =>$event->attribute_Accessible,
-            "attribute_SoldOut"             =>$event->attribute_SoldOut,
-            "attribute_Cancelled"           =>$event->attribute_Cancelled,
-            "attribute_Postponed"           =>$event->attribute_Postponed,
-            "attribute_WaitingList"         =>$event->attribute_WaitingList,
-            "attribute_SellingFast"         =>$event->attribute_SellingFast,
-            "attribute_Free"                =>$event->attribute_Free,
-            "attribute_WebsiteSupplementaryItem"=>$event->attribute_WebsiteSupplementaryItem,
-            "attribute_WebsiteSupplementaryItemOrder"=>$event->attribute_WebsiteSupplementaryItemOrder,
-            "attribute_SubHeading"          =>$event->attribute_SubHeading,
+            "attribute_AGERANGE"            =>$event->attribute_AGERANGE,
+            "attribute_EVENTSUBJECT"       =>$event->attribute_EVENTSUBJECT,
+            "attribute_EVENTTYPE"          =>$event->attribute_EVENTTYPE,
+            "attribute_ONLINE"             =>$event->attribute_ONLINE,
+            "attribute_TRIGGERWARNINGTAG"  =>$event->attribute_TRIGGERWARNINGTAG,
+            "attribute_VENUE"              =>$event->attribute_VENUE,
+            "attribute_FAMILYFRIENDLY"     =>$event->attribute_FAMILYFRIENDLY,
+            "attribute_FREEFORMEMBERS"     =>$event->attribute_FREEFORMEMBERS,
+            "attribute_SCHOOLSKEYSTAGE"    =>$event->attribute_SCHOOLSKEYSTAGE,
+            "attribute_KS1TOPICS"          =>$event->attribute_KS1TOPICS,
+            "attribute_KS3TOPICS"          =>$event->attribute_KS3TOPICS,
         ];
         $sql_event_update=$this->wpdb->update( $events,$eventsData, array( 'id' => $eventID ));
 
@@ -800,7 +787,7 @@ class HdKSpPopulate{
         foreach($data_events as $datum){
             $first_instance = update_post_meta($datum['postID'],'start_date',date('Y-m-d H:i:s',strtotime($datum['firstinstanceDateTime'])));
             $last_instance = update_post_meta($datum['postID'],'end_date',date('Y-m-d H:i:s',strtotime($datum['lastinstanceDateTime'])));
-            $on_sale = update_post_meta($datum['postID'],'wpcf-ap-event-has-tickets',$datum['isOnSale']);
+            $on_sale = update_post_meta($datum['postID'],'event_has_tickets',$datum['isOnSale']);
             if($first_instance){
                 $count++;
             }
@@ -871,53 +858,29 @@ class HdKSpPopulate{
 
 
     public function generateTaxData($event,$id){
-        $event_cat_terms=array(154);
-        $categories = [
-            "music"                =>$event->attribute_Music,
-            "theatre"              =>$event->attribute_Theatre,
-            "christmas"            =>$event->attribute_Christmas,
-            "comedy"               =>$event->attribute_Comedy,
-            "creative-learning"    =>$event->attribute_CreativeLearning,
-            "ice-hockey"           =>$event->attribute_IceHockey,
-            "ice-rink"             =>$event->attribute_IceRink,
-            "ice-rink-events"      =>$event->attribute_IceRinkEvents,
-            "sport"                =>$event->attribute_Sport,
-            "summer-series"        =>$event->attribute_SummerSeries,
-            "the-terrace"          =>$event->attribute_TheTerrace,
-            "tours-talks"          =>$event->attribute_ToursAndTalks,
-            "festival"             =>$event->attribute_Festivals,
-            "lifestyle"            =>$event->attribute_LifestyleExhibitions,
-            "trade-shows"          =>$event->attribute_TradeExhibitions,
-            "accessible"           =>$event->attribute_Accessible,
+        $h_terms = [
+            'event_audience' => $event->attribute_AGERANGE,
+            'event_type' => $event->attribute_EVENTTYPE,
+            'event_schools_key_stage' => $event->attribute_SCHOOLSKEYSTAGE,
+        ];
+        $nh_terms = [
+            'event_ks1_topics' => $event->attribute_KS1TOPICS,
+            'event_ks3_topics' => $event->attribute_KS3TOPICS,
+            'event_subject' => $event->attribute_EVENTSUBJECT,
         ];
 
-        foreach($categories as $slug=>$cat){
-            if($cat){
-                $term = term_exists($slug,'event-category');
-                if(!$term){
-                    $term = wp_insert_term(ucwords(str_replace('-',' ',$slug)),'event-category');
-                }
-                else{
-                    $term = (int) $term['term_id'];
-                }
-                $event_cat_terms[]=$term;
-            }       
-        }
-        $supplementary = $event->attribute_WebsiteSupplementaryItem;
-        $supp_event_cat_terms = [];
-        if($supplementary){
-            $term = term_exists($supplementary,'supp-event');
+        foreach($h_terms as $key=>$value){
+            $term = term_exists($value,$key);
             if(!$term){
-                $term = wp_insert_term(ucwords(str_replace('-',' ',$supplementary)),'supp-event');
-               
+                $term = wp_insert_term(ucwords(str_replace('-',' ',$value)),$key);
             }
-            $term = (int) $term['term_id'];
-            $supp_event_cat_terms[]=$term;
-        }
-        $tax_input=array(
-            'event-category' => $event_cat_terms,
-            'supp-event' => $supp_event_cat_terms
-        );
+            else{
+                $term = (int) $term['term_id'];
+            }
+        }       
+
+
+        $tax_input=array_merge($h_terms,$nh_terms);
         return $tax_input;
     }
 
@@ -927,30 +890,18 @@ class HdKSpPopulate{
         $end = date('Y-m-d H:i:s',strtotime($event->lastInstanceDateTime));
         $meta_input=array(
             'spektrix_ticketing'=>1,
-            'wpcf-ap-event-has-tickets'=>$event->isOnSale?1:0,
+            'event_has_tickets'=>$event->isOnSale?1:0,
             'start_date'=>$start,
             'end_date'=>$end,
-            'ap-event-spektrix-id'=>$event->id,
+            'spektrix_id'=>$event->id,
             'duration'=>$event->duration,
             'next_instance_date'=>$next_instance_date?date('Y-m-d H:i:s',strtotime($next_instance_date)):$start,
-            'sub_header'=>$event->attribute_SubHeading,
+            'trigger_warning_tag'=>$event->attribute_TRIGGERWARNINGTAG,
+            'online'=>$event->attribute_ONLINE?1:0,
+            'family_friendly'=>$event->attribute_FAMILYFRIENDLY?1:0,
+            'free_for_members'=>$event->attribute_FREEFORMEMBERS?1:0,
+            'location'=>$event->attribute_VENUE,
         );
-        if($event->attribute_WebsiteSupplementaryItemOrder){
-            $meta_input['supp_order']=$event->attribute_WebsiteSupplementaryItemOrder;
-        }
-        $meta_attributes = [
-            'sold-out'=>'attribute_SoldOut',
-            'cancelled'=>'attribute_Cancelled',
-            'postponed'=>'attribute_Postponed',
-            'waiting_list'=>'attribute_WaitingList',
-            'selling-fast'=>'attribute_SellingFast',
-            'free'=>'attribute_Free',
-        ];
-        foreach($meta_attributes as $name=>$meta_attribute){
-            if($event->{$meta_attribute}){
-                $meta_input['wpcf-ap-event-tile-flash']=$name;
-            }
-        }
         return $meta_input;
     }
 
@@ -1055,10 +1006,10 @@ class HdKSpPopulate{
         $counts[$this->temp_tables['events_data']] = intval($this->tableCounter($this->temp_tables['events_data']));
         $counts[$this->temp_tables['events_data_prices']] = intval($this->tableCounter($this->temp_tables['events_data_prices']));
         $counts[$this->temp_tables['events_attributes_terms_temp']] = intval($this->tableCounter($this->temp_tables['events_attributes_terms_temp']));
-        if($this->settings['is_merch_active']){
+        /* if($this->settings['is_merch_active']){
             $counts[$this->temp_tables['merch']] = intval($this->tableCounter($this->temp_tables['merch']));
             $counts[$this->temp_tables['merch_attributes_terms_temp']] = intval($this->tableCounter($this->temp_tables['merch_attributes_terms_temp']));
-        }
+        } */
         if($this->settings['is_members_active']){
             $counts[$this->temp_tables['members']] = intval($this->tableCounter($this->temp_tables['members']));
         }

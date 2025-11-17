@@ -322,6 +322,8 @@ class HdKSpActions{
         else{ ?>
             <p> <?php __("You are not authorized to perform this operation.") ?> </p>
         <?php }
-    }  
+    } 
+    
+   
     
 }

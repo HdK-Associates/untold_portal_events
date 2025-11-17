@@ -16,6 +16,7 @@ class HdKSpUtilities{
        return [
         'client_code'=>$settings['client_code'],
         'subdomain'=>$settings['subdomain'],
+        'subdomain_no_schema'=>$settings['subdomain_no_schema'],
         'stylesheet'=>$settings['stylesheet']
        ];
     }
@@ -39,10 +40,10 @@ class HdKSpUtilities{
     }
 
     public static function get_donate_component($client_code, $fund_id){
-        $amounts = explode(',',get_option('hdk-donate-amounts'));
+        $amounts = explode(',',get_field('hdk-donate-amounts','option'));
         $success = get_option('hdk-donate-success');
         $error = get_option('hdk-donate-error');
-        $output = '<spektrix-donate client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain'].'" fund-id="'.$fund_id.'">';
+        $output = '<spektrix-donate client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain_no_schema'].'" fund-id="'.$fund_id.'" forward-to="/basket">';
         $output.= '<div class="donate--amount"><span>Donate £</span><span data-display-donation-amount></span></div>';
         $output.= '<div class="donate--buttons">';
         foreach($amounts as $amount){
@@ -61,10 +62,10 @@ class HdKSpUtilities{
    
         $output='';
         foreach($memberships as $membership){
-            $output.= '<spektrix-memberships client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain'].'" membership-id="'.$membership['id'].'">';
+            $output.= '<spektrix-memberships client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain_no_schema'].'" membership-id="'.$membership['id'].'" forward-to="/basket">';
             $output.= '<h3>'.$membership['name'].'</h3><p>'.$membership['htmlDescription'].'</p>';
             $output.='<h4>£'.$membership['price'].'</h4>';
-            $output .= '<button data-submit-membership>Join</button>
+            $output .= '<button data-submit-membership>Donate</button>
             <label for="autorenew">
                 <input type="checkbox" name="autorenew" data-set-autorenew>Automatically renew?
             </label>
@@ -237,19 +238,25 @@ class HdKSpUtilities{
 
     public static function getNewsletterForm(){
         $client_codes = self::get_client_codes();
-        $output='<form id="newsletter" action="https://'.$client_codes['subdomain'].'/'.$client_codes['client_code'].'/website/secure/signup.aspx" method="POST">
+        $output='
+        <div class="sign-up_message hide"></div>
+        <form action="'.$client_codes['subdomain'].'/'.$client_codes['client_code'].'/website/secure/signup.aspx" method="POST">
 			<input
                 type="hidden"
                 name="ReturnUrl"
                 value="'.get_site_url().'/thank-you-for-signing-up/"
             />
-			<label for="FirstName" >First Name:</label>
-			<input name="FirstName" id="FirstName" type="text" placeholder="First name" required>
+            <div class="input_group grid grid_50">
+                <label for="FirstName" >First Name:</label>
+                <input name="FirstName" id="FirstName" type="text" placeholder="First name" required>
 
-			<label for="LastName">Last Name:</label>
-			<input name="LastName" id="LastName" type="text" placeholder="Last name" required>
-
-			<input placeholder="Email address" name="Email" id="Email" type="email" required>';
+                <label for="LastName">Last Name:</label>
+                <input name="LastName" id="LastName" type="text" placeholder="Last name" required>
+            </div>
+            <div class="input_group">
+                <label for="Email">Email Address:</label>
+                <input placeholder="Email address" name="Email" id="Email" type="email" required>
+            </div>';
 		$output.='<input id="newsletter_submit" type="submit" name="submit" value="Subscribe">
 		</form>';
         return $output;
@@ -383,4 +390,24 @@ class HdKSpUtilities{
         </iframe>';
         return $output;
     }
+
+    public static function loginForm(){
+        $client_codes = self::get_client_codes();
+        wp_enqueue_script('hdk-login',plugin_dir_url( __DIR__ ). 'js/login.js',[],'1.0',true);
+        $output = '<form id="login_form" action="'.$client_codes['subdomain'].'/'.$client_codes['client_code'].'/api/v3/customer/authenticate" method="POST">
+            <label for="Email">Email address</label>
+            <input name="email" id="email" type="email" required>
+
+            <label for="Password">Password</label>
+            <input name="password" id="password" type="password" required>
+
+            <a href="'.get_site_url().'/reset-password/" class="forgot_password">Forgotten your password?</a>
+            
+            <input id="login_submit" type="submit" name="submit" class="button decorative" value="Log in">
+            <div id="login_errors"></div>
+        </form>';
+        return $output;
+        
+    }
+    
 }
