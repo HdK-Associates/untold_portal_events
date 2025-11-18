@@ -52,7 +52,19 @@ class HdKSpUtilities{
         $output.= '</div><div class="donate--input">';
         $output.='<p>Or choose a different amount:</p><input type="number" data-custom-donation-input></input></div>';
         $output .= '<button data-submit-donation>Donate</button><div data-success-container style="display: none;">'.$success.'</div>
-        <div data-fail-container style="display: none;">'.$error.'</div></spektrix-donate>';
+        <div data-fail-container style="display: none;">'.$error.'</div></spektrix-donate><script>
+            const donateButtons = document.querySelectorAll("[data-donate-amount]");
+            const input = document.querySelector("[data-custom-donation-input]");
+            donateButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    donateButtons.forEach(btn => btn.classList.remove("selected"));
+                    button.classList.add("selected");
+                });
+            });
+            input.addEventListener("change", () => {
+                donateButtons.forEach(btn => btn.classList.remove("selected"));
+            });
+        </script>';
         return $output;
     }
 
