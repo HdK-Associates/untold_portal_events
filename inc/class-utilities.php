@@ -64,11 +64,12 @@ class HdKSpUtilities{
         foreach($memberships as $membership){
             $output.= '<spektrix-memberships client-name="'.$client_code['client_code'].'" custom-domain="'.$client_code['subdomain_no_schema'].'" membership-id="'.$membership['id'].'" forward-to="/basket">';
             $output.= '<h3>'.$membership['name'].'</h3><p>'.$membership['htmlDescription'].'</p>';
-            $output.='<h4>£'.$membership['price'].'</h4>';
-            $output .= '<button data-submit-membership>Donate</button>
-            <label for="autorenew">
+            //$output.='<h4>£'.$membership['price'].'</h4>';
+            $output.='<label for="autorenew">
                 <input type="checkbox" name="autorenew" data-set-autorenew>Automatically renew?
-            </label>
+            </label>';
+            $output .= '<button data-submit-membership>Donate</button>
+            
            <div data-success-container style="display: none;">'.$success.'</div>
             <div data-fail-container style="display: none;">'.$error.'</div></spektrix-memberships>';
         }
