@@ -223,6 +223,38 @@ class HdkSpAPI{
             return 'Something went wrong. Please try again later';
         }
     }
+   
+    public function SpektrixAPIDeleteTagsFromUser($email,$tags){
+        $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers?email='.$email;
+        $method     = 'GET';
+        $date       = gmdate('D, d M Y H:i:s \G\M\T');
+        $rawdata = wp_remote_get( $endpoint,[
+        'method' => $method,
+        'headers' => [
+            'Authorization' => $this->CreateAuthHeader($method,$endpoint,null,$date),
+            'host' => 'system.spektrix.com',
+            'date' => $date,
+        ]
+        ]);
+        $data = json_decode(wp_remote_retrieve_body( $rawdata),true);
+        if($data['id']){
+            $id = $data['id'];
+            foreach($tags as $tag){
+                $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers/tags/'.$tag.'?id='.$id; 
+                $method     = 'DELETE';
+                $date       = gmdate('D, d M Y H:i:s \G\M\T');
+                wp_remote_request($endpoint,[
+                    'method' => 'DELETE',
+                    'headers'     => [
+                        'Authorization' => $this->CreateAuthHeader($method,$endpoint,'',$date),
+                        'host' => 'system.spektrix.com',
+                        'date' => $date, 
+                        'Content-Type' => 'application/json',
+                    ],
+                ]);	
+            }
+        }
+    }
 
     public function SpektrixAPIAddTagsByUserID($id,$body){
         $endpoint   = 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers/'.$id.'/tags';

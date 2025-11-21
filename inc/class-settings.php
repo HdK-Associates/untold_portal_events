@@ -18,7 +18,7 @@ class HdKSpSettings{
         }
        // add_action('admin_init',array($this,'RegisterSettings'));
         $this->client_code 		= $_ENV['SPEKTRIX_ACCOUNT_ID'];
-        $this->stylesheet 		= 'spektrix-style.css';	
+        $this->stylesheet 		= 'spektrix-style-portal.css';	
         $this->subdomain		= $_ENV['SPEKTRIX_ENDPOINT'];
         $this->subdomain_no_schema = $_ENV['SPEKTRIX_ENDPOINT_NO_SCHEMA'] ?? '';
         $this->members 		    = true;

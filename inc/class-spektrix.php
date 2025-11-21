@@ -201,6 +201,11 @@ public function addTagsToUser($fname,$lname,$email,$tags,$server_side=false){
     return $api->SpektrixAPIPostUserWithTags($fname,$lname,$email,$tags,$server_side);
 }
 
+public function removeTagsFromUser($email,$tags){
+    $api = new HdkSpAPI($this->settings);
+    return $api->SpektrixAPIDeleteTagsFromUser($email,$tags);
+}
+
 public function post_tag_handler(){
     if(!isset($_POST['user_id'])){return false;}
     $api = new HdkSpAPI($this->settings);
