@@ -60,7 +60,8 @@ class HdKSpPopulate{
         }
         if(count($error)==0){
             $message = $count .' records updated.';
-            $counts = $this->ValidateTempTablesCount();
+            //Commenting this out as we often don't have events for this site
+            /* counts = $this->ValidateTempTablesCount();
             if($counts['wp_spektrix_events_temp']==0 || $counts['wp_spektrix_events_data_temp']==0 || $counts['wp_spektrix_events_data_prices_temp']==0){
                 $this->DropTempTables();
                 delete_transient('spektrix_refresh_message');
@@ -69,7 +70,7 @@ class HdKSpPopulate{
                 wp_mail('chad@wearehdk.com','Spektrix Cron Errors',wp_date('YmdH:i:s').' '. $message.' ' .json_encode($counts));
                 $this->LogError(json_encode($counts));
             }
-            else{
+            else{ */
                 WP_CLI::line( 'Updating all Tables');
                 $this->LogError($message);
                 $this->DropBackupTables();
@@ -81,7 +82,7 @@ class HdKSpPopulate{
                 set_transient('spektrix_refresh_message',$message,180);
                 delete_transient('spektrix_update_running');
                 wp_mail('chad@wearehdk.com','Spektrix Cron Successful',wp_date('YmdH:i:s'));
-            }
+           // }
          }
         else{
             $message='Something went wrong while inserting the records';
