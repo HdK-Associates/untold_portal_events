@@ -179,6 +179,9 @@ class HdKSpPopulate{
             }
             set_time_limit(0);
             ignore_user_abort(true);
+            if($event->attribute_EVENTTYPE!=='Regimental Only'){
+                continue;
+            }
             $insert = $this->insertEvent($event); 
             if(isset($insert['skipped'])){
                 if ( defined( 'WP_CLI' ) && WP_CLI ) {
