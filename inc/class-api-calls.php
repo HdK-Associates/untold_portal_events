@@ -129,6 +129,11 @@ class HdkSpAPI{
             $bodyParams['AgreedStatements']=[[$this->consent_id]];
         }
           
+        if(!isset($bodyParams['Tags'])){
+            $bodyParams['Tags']=[];
+        }
+        //Origin tag 
+        $bodyParams['Tags'][]= '3401ARKRNLBJKDJTKHBHRJBNHVDNSKPTR';
         if(!$server_side){
             $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customer';      
             $rawdata	= wp_remote_post($endpoint,[
