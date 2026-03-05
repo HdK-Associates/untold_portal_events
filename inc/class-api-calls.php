@@ -11,7 +11,7 @@ class HdkSpAPI{
         $this->subdomain = $settings['subdomain'];
         $this->key = $_ENV['SPEKTRIX_API_KEY'];
         $this->api_user = $_ENV['SPEKTRIX_API_USER'];
-        $this->consent_id = '401ANPJQJQPQMRSBDNMVNLSPGTRBVQVRH';
+        $this->consent_id = '201AGBHDRLQHNHPHKKMPKLGPMDRDTDMVL';
     }
     public function SpektrixGetAPIEvents() {
         if(!$this->client_code && !$this->subdomain){
@@ -126,6 +126,7 @@ class HdkSpAPI{
                 $tags = [$tags];
             }
             $bodyParams['Tags']=$tags;
+            $bodyParams['AgreedStatements']=[[$this->consent_id]];
         }
           
         if(!$server_side){
