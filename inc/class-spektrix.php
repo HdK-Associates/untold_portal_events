@@ -196,9 +196,9 @@ public function get_tag_form(){
     return HdKSpUtilities::getTagForm($tags,$user_id);
 }
 
-public function addTagsToUser($fname,$lname,$email,$tags,$server_side=false){
+public function addTagsToUser($fname,$lname,$email,$tags){
     $api = new HdkSpAPI($this->settings);
-    return $api->SpektrixAPIPostUserWithTags($fname,$lname,$email,$tags,$server_side);
+    return $api->SpektrixAPIPostUserWithTags($fname,$lname,$email,$tags);
 }
 
 public function removeTagsFromUser($email,$tags){

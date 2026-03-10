@@ -115,7 +115,7 @@ class HdkSpAPI{
         return $auth;
     }
 
-    public function SpektrixAPIPostUserWithTags($firstName,$lastName,$email,$tags=null,$server_side=false){
+    public function SpektrixAPIPostUserWithTags($firstName,$lastName,$email,$tags=null){
         $bodyParams = [
             'email'=>$email,
             'firstName'=>$firstName,
@@ -134,31 +134,20 @@ class HdkSpAPI{
         }
         //Origin tag 
         $bodyParams['Tags'][]= '3401ARKRNLBJKDJTKHBHRJBNHVDNSKPTR';
-        if(!$server_side){
-            $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customer';      
+
+        $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers'; 
+            $date       = gmdate('D, d M Y H:i:s \G\M\T');  
+            $body = json_encode($bodyParams);   
             $rawdata	= wp_remote_post($endpoint,[
-                'method' => 'POST',
-                'headers'     => [
-                    'Content-Type' => 'application/json',
-                ],
-                'body'=>json_encode($bodyParams)
-            ]);	
-        }
-        else{
-            $endpoint 	= 'https://system.spektrix.com/'.$this->client_code.'/api/v3/customers'; 
-             $date       = gmdate('D, d M Y H:i:s \G\M\T');  
-             $body = json_encode($bodyParams);   
-             $rawdata	= wp_remote_post($endpoint,[
-                'method' => 'POST',
-                'headers'     => [
-                    'Authorization' => $this->CreateAuthHeader('POST',$endpoint,$body,$date),
-                    'host' => 'system.spektrix.com',
-                    'date' => $date,
-                    'Content-Type' => 'application/json',
-                ],
-                'body'=>$body
-            ]);	
-        }
+            'method' => 'POST',
+            'headers'     => [
+                'Authorization' => $this->CreateAuthHeader('POST',$endpoint,$body,$date),
+                'host' => 'system.spektrix.com',
+                'date' => $date,
+                'Content-Type' => 'application/json',
+            ],
+            'body'=>$body
+        ]);	
         $data = json_decode(wp_remote_retrieve_body( $rawdata),true);
         if(isset($data['id'])){
             return 'Thank you. You\'ve been successfully signed up';
