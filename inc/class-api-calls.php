@@ -126,7 +126,7 @@ class HdkSpAPI{
                 $tags = [$tags];
             }
             $bodyParams['Tags']=$tags;
-            $bodyParams['AgreedStatements']=[[$this->consent_id]];
+            $bodyParams['AgreedStatements']=[$this->consent_id];
         }
           
         if(!isset($bodyParams['Tags'])){
